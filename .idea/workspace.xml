@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8e646b94-32f2-4ce6-abc2-9cfa76ac1f67" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/KotlinProject.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/AuthController.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/CarController.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/ClientController.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/RentalController.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/UserController.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/connection.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/CarDTO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/CarSpecificationsDTO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/ClientDTO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/LoginRequestDTO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/RentalDTO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/UserDTO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dto/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/car.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/car_specifications.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/client.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/rental.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/user.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/entity/user_login.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/CarRepository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/CarSpecificationsRepository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/ClientRepository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/RentalRepository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/UserRepository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/CarService.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/ClientService.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/Dependencies.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/RentalService.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/UserDetailsService.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/UserService.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CarControllerTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CarServiceTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/ClientControllerTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/ClientOverride.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/ClientServiceTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/RentalControllerTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/RentalServiceTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/UserControllerTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/UserServiceTest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="36ZkTSwYFJrxJhNlNUCwFnZsutO" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python tests.Python tests for tests.CarControllerTest.test_create_car_success.executor": "Run",
+    "Python tests.Python tests for tests.CarControllerTest.test_delete_car_not_found.executor": "Run",
+    "Python tests.Python tests for tests.CarControllerTest.test_delete_car_success.executor": "Run",
+    "Python tests.Python tests for tests.CarControllerTest.test_get_car_by_id_not_found.executor": "Run",
+    "Python tests.Python tests for tests.CarControllerTest.test_get_car_by_id_success.executor": "Run",
+    "Python tests.Python tests for tests.CarControllerTest.test_get_cars_by_filter.executor": "Run",
+    "Python tests.Python tests for tests.CarControllerTest.test_get_cars_by_price_range_invalid.executor": "Run",
+    "Python tests.Python tests for tests.CarControllerTest.test_get_cars_by_price_range_validation_error.executor": "Run",
+    "Python tests.Python tests for tests.CarServiceTest.test_create_car_duplicate_vin.executor": "Run",
+    "Python tests.Python tests for tests.CarServiceTest.test_create_car_success.executor": "Run",
+    "Python tests.Python tests for tests.CarServiceTest.test_get_car_by_id_not_found.executor": "Run",
+    "Python tests.Python tests for tests.CarServiceTest.test_get_cars_by_filter.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_create_client_duplicate_error.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_create_client_success.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_delete_client_not_found.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_delete_client_success.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_get_client_by_filter.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_get_client_by_id_not_found.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_get_client_by_id_success.executor": "Run",
+    "Python tests.Python tests for tests.ClientControllerTest.test_update_client_error.executor": "Run",
+    "Python tests.Python tests for tests.ClientServiceTest.test_create_client_duplicate_phone.executor": "Run",
+    "Python tests.Python tests for tests.ClientServiceTest.test_create_client_success.executor": "Run",
+    "Python tests.Python tests for tests.ClientServiceTest.test_get_client_by_id_not_found.executor": "Run",
+    "Python tests.Python tests for tests.ClientServiceTest.test_get_clients_by_filter.executor": "Run",
+    "Python tests.Python tests for tests.RentalControllerTest.test_cancel_rental_success.executor": "Run",
+    "Python tests.Python tests for tests.RentalControllerTest.test_complete_rental_success.executor": "Run",
+    "Python tests.Python tests for tests.RentalControllerTest.test_create_rental_success.executor": "Run",
+    "Python tests.Python tests for tests.RentalControllerTest.test_delete_rental_not_found.executor": "Run",
+    "Python tests.Python tests for tests.RentalControllerTest.test_extend_rental_success.executor": "Run",
+    "Python tests.Python tests for tests.RentalControllerTest.test_get_rentals_by_filter.executor": "Run",
+    "Python tests.Python tests for tests.RentalsServiceTest.test_cancel_rental_not_found.executor": "Run",
+    "Python tests.Python tests for tests.RentalsServiceTest.test_complete_rental_calculation.executor": "Run",
+    "Python tests.Python tests for tests.RentalsServiceTest.test_create_rental_car_not_available.executor": "Run",
+    "Python tests.Python tests for tests.RentalsServiceTest.test_create_rental_success.executor": "Run",
+    "Python tests.Python tests for tests.RentalsServiceTest.test_extend_rental_valid.executor": "Run",
+    "Python tests.Python tests for tests.RentalsServiceTest.test_get_rent_by_id_success.executor": "Run",
+    "Python tests.Python tests for tests.UserControllerTest.test_create_user_email_taken.executor": "Run",
+    "Python tests.Python tests for tests.UserControllerTest.test_create_user_success.executor": "Run",
+    "Python tests.Python tests for tests.UserControllerTest.test_delete_user_success.executor": "Run",
+    "Python tests.Python tests for tests.UserControllerTest.test_get_user_by_id_success.executor": "Run",
+    "Python tests.Python tests for tests.UserControllerTest.test_update_user_success.executor": "Run",
+    "Python tests.Python tests for tests.UserServiceTest.test_count_all.executor": "Run",
+    "Python tests.Python tests for tests.UserServiceTest.test_create_user_email_exists.executor": "Run",
+    "Python tests.Python tests for tests.UserServiceTest.test_create_user_success.executor": "Run",
+    "Python tests.Python tests for tests.UserServiceTest.test_delete_user.executor": "Run",
+    "Python tests.Python tests for tests.UserServiceTest.test_get_user_by_id_not_found.executor": "Run",
+    "Python tests.Python tests for tests.UserServiceTest.test_get_user_by_id_success.executor": "Run",
+    "Python tests.Python tests for tests.UserServiceTest.test_update_user.executor": "Run",
+    "Python tests.Python tests in UserControllerTest.py.executor": "Run",
+    "Python.CarDTO.executor": "Run",
+    "Python.CarDialog (1).executor": "Run",
+    "Python.CarDialog.executor": "Run",
+    "Python.CarSpecificationsDTO.executor": "Run",
+    "Python.ClientRepository.executor": "Run",
+    "Python.EmployeeDTO.executor": "Run",
+    "Python.MainWindow (1).executor": "Run",
+    "Python.MainWindow.executor": "Run",
+    "Python.MainWindow_ui.executor": "Run",
+    "Python.__init__ (1).executor": "Run",
+    "Python.__init__.executor": "Run",
+    "Python.car.executor": "Run",
+    "Python.client.executor": "Run",
+    "Python.employee.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.temp.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\work\PyCharmProjects\PythonProject\database" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python tests.Python tests for tests.RentalControllerTest.test_delete_rental_not_found">
+    <configuration name="Python tests for tests.RentalControllerTest.test_cancel_rental_success" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="KotlinProject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.RentalControllerTest.test_cancel_rental_success&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.RentalControllerTest.test_complete_rental_success" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="KotlinProject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.RentalControllerTest.test_complete_rental_success&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.RentalControllerTest.test_delete_rental_not_found" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="KotlinProject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.RentalControllerTest.test_delete_rental_not_found&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.RentalControllerTest.test_extend_rental_success" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="KotlinProject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.RentalControllerTest.test_extend_rental_success&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for tests.RentalControllerTest.test_get_rentals_by_filter" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="KotlinProject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.RentalControllerTest.test_get_rentals_by_filter&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.Python tests for tests.RentalControllerTest.test_delete_rental_not_found" />
+        <item itemvalue="Python tests.Python tests for tests.RentalControllerTest.test_get_rentals_by_filter" />
+        <item itemvalue="Python tests.Python tests for tests.RentalControllerTest.test_cancel_rental_success" />
+        <item itemvalue="Python tests.Python tests for tests.RentalControllerTest.test_complete_rental_success" />
+        <item itemvalue="Python tests.Python tests for tests.RentalControllerTest.test_extend_rental_success" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-ce6832f46686-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.178" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8e646b94-32f2-4ce6-abc2-9cfa76ac1f67" name="Changes" comment="" />
+      <created>1765221488697</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1765221488697</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/tests/ClientServiceTest.py</url>
+          <line>90</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
