@@ -1,4 +1,5 @@
-import json
+from .data import get_data
+
 import urllib.parse
 from typing import Any, Generator
 
@@ -12,9 +13,8 @@ class DatabaseConfig:
     Класс для загрузки конфигурации подключения к БД из JSON-файла
     и создания синхронного или асинхронного движка SQLAlchemy.
     """
-    def __init__(self, config_path: str, is_local: bool = True):
-        with open(config_path, 'r', encoding='utf-8') as f:
-            self.config = json.load(f)['database']
+    def __init__(self, config_: dict, is_local: bool = True):
+        self.config = config_
         self.is_local = is_local
 
     def _build_string(self, is_async: bool = False) -> str:
@@ -54,11 +54,11 @@ class DatabaseConfig:
 
     def async_engine(self, echo: bool = False) -> AsyncEngine:
         connection_string = self._build_string(is_async=True)
-        engine = create_async_engine(connection_string, echo=echo)
+        engine = create_async_engine(connection_string, echo=echo, connect_args={'charset': ' cp1251'})
         return engine
 
 
-config = DatabaseConfig('config\\db_config.json', True)
+config = DatabaseConfig(get_data('database')['database'], True)
 
 SyncEngine = config.sync_engine(echo=False)
 SessionLocal: sessionmaker = sessionmaker(bind=SyncEngine)

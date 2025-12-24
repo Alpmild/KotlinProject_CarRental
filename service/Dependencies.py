@@ -1,5 +1,5 @@
 from . import CarService, UserService, ClientService, RentalService, UserDetailsService
-from config import get_db
+from config import get_db, get_data
 
 import datetime
 from jose import jwt
@@ -8,9 +8,10 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
-SECRET_KEY = "super-secret-key-2025"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+data = get_data("auth-key", "auth-algorithm", "token-expires-minutes")
+SECRET_KEY = data["auth-key"]
+ALGORITHM = data["auth-algorithm"]
+ACCESS_TOKEN_EXPIRE_MINUTES = data["token-expires-minutes"]
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
