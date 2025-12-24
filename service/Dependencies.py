@@ -1,13 +1,12 @@
 from . import CarService, UserService, ClientService, RentalService, UserDetailsService
-from database import get_db
+from config import get_db
 
 import datetime
-import bcrypt
-from jose import JWTError, jwt
+from jose import jwt
 from sqlalchemy.orm import Session
 
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 
 SECRET_KEY = "super-secret-key-2025"
 ALGORITHM = "HS256"

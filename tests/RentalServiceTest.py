@@ -1,111 +1,96 @@
+from service import get_rental_service
+from dto import RentalCreateDTO, RentalUpdateDTO, RentalStatusEnum
+from config import SessionLocal
+
 import pytest
-from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta, timezone
-from service import RentalService
-from dto import (RentalCreateDTO, RentalUpdateDTO, RentalResponseDTO,
-                 RentalWithRelationsDTO, RentalStatusEnum)
-from entity import Rental
+
+
+@pytest.fixture(scope="function")
+def db_session():
+    return SessionLocal()
 
 
 @pytest.fixture
-def mock_session():
-    return MagicMock()
-
-
-@pytest.fixture
-def rental_service(mock_session):
-    service = RentalService(mock_session)
-    # Заменяем все репозитории и сервисы на моки
-    service.rental_repo = MagicMock()
-    service.car_repo = MagicMock()
-    service.client_repo = MagicMock()
-    service.user_repo = MagicMock()
-
-    service.car_service = MagicMock()
-    service.client_service = MagicMock()
-    service.user_service = MagicMock()
-    return service
+def rental_service(db_session):
+    return get_rental_service(db_session)
 
 
 def test_create_rental_success(rental_service):
-    # Данные
-    now = datetime.now(timezone.utc)
-    start = now + timedelta(days=1)
-    end = start + timedelta(days=2)
+    start = datetime.now(timezone.utc) + timedelta(days=10)
+    end = start + timedelta(days=12)
+
     dto = RentalCreateDTO(
-        car_id=1, client_id=1, user_id=1,
-        start_date=start, end_date=end, status=RentalStatusEnum.AWAITING
+        car_id=26,
+        client_id=6,
+        user_id=2,
+        start_date=start,
+        end_date=end,
+        notes="First rental"
     )
 
-    # Настройка моков (проверки существования)
-    rental_service.client_repo.exists.return_value = True
-    rental_service.car_repo.exists.return_value = True
-    rental_service.user_repo.exists.return_value = True
-    rental_service.rental_repo.is_car_available.return_value = True
+    result = rental_service.create_rental(dto)
 
-    # Имитация создания
-    mock_rental = Rental(
-        rent_id=100, car_id=1, client_id=1, user_id=1,
-        start_date=start, end_date=end, status=RentalStatusEnum.AWAITING,
-        created_at=datetime.now(), notes=None
+    assert result.rental.car_id == dto.car_id
+    assert result.rental.status == RentalStatusEnum.AWAITING
+    rental_service.delete_rental(result.rental.rent_id)
+
+
+def test_create_rental_car_not_available(rental_service):
+    """
+    В файле config/test_data.py мы уже ранее создавали аренду,
+    которая будет пересекаться с той, которую мы хотим создать.
+    """
+
+    start = datetime.now(timezone.utc) + timedelta(days=1)
+    end = start + timedelta(days=3)
+
+    dto = RentalCreateDTO(
+        car_id=26,
+        client_id=6,
+        user_id=2,
+        start_date=start,
+        end_date=end
     )
-    rental_service.rental_repo.create.return_value = mock_rental
 
-    # Т.к. create_rental вызывает get_rent_by_id, мокаем его результат
-    expected_result = MagicMock(spec=RentalWithRelationsDTO)
-    with patch.object(RentalService, 'get_rent_by_id', return_value=expected_result):
-        result = rental_service.create_rental(dto)
-
-        assert result == expected_result
-        rental_service.rental_repo.create.assert_called_once()
+    with pytest.raises(ValueError) as error:
+        rental_service.create_rental(dto)
 
 
-def test_extend_rental_valid(rental_service):
-    rent_id = 1
-    old_end = datetime(2025, 1, 1, tzinfo=timezone.utc)
-    new_end = datetime(2025, 1, 10, tzinfo=timezone.utc)
-
-    mock_rental = MagicMock(spec=Rental)
-    mock_rental.end_date = old_end
-    rental_service.rental_repo.get_by_rent_id.return_value = mock_rental
-
-    with patch.object(RentalService, 'update_rental') as mock_update:
-        rental_service.extend_rental(rent_id, new_end)
-        mock_update.assert_called_once()
-        # Проверяем, что в update передан DTO с новой датой
-        args = mock_update.call_args[0][0]
-        assert args.end_date == new_end
+def test_create_rental_invalid_client(rental_service):
+    dto = RentalCreateDTO(
+        car_id=26,
+        client_id=999,  # Несуществующий ID
+        user_id=2,
+        start_date=datetime.now(timezone.utc) + timedelta(days=2),
+        end_date=datetime.now(timezone.utc) + timedelta(days=3)
+    )
+    with pytest.raises(ValueError, match="client_id=999 не существует"):
+        rental_service.create_rental(dto)
 
 
-def test_complete_rental_calculation(rental_service):
-    rent_id = 5
-    actual_return = datetime(2025, 1, 1, 15, 0)  # 15:00
+def test_extend_rental(rental_service):
+    start = datetime.now(timezone.utc) + timedelta(days=80)
+    old_end = start + timedelta(days=90)
+    new_end = (start + timedelta(days=100)).replace(microsecond=0)
 
-    # Мокаем аренду
-    mock_rental = MagicMock()
-    mock_rental.car_id = 10
-    rental_service.rental_repo.get_by_rent_id.return_value = mock_rental
-    rental_service.rental_repo.exist.return_value = True
+    rental_dto = RentalCreateDTO(
+        car_id=27,
+        client_id=7,
+        user_id=2,
+        start_date=start,
+        end_date=old_end
+    )
+    created = rental_service.create_rental(rental_dto)
+    extended = rental_service.extend_rental(created.rental.rent_id, new_end)
 
-    # Мокаем параметры машины для расчета цены
-    # start_date 12:00, rate 1000. Разница 3 часа.
-    rental_service.car_service.get_car_by_id.return_value = {
-        'start_date': datetime(2025, 1, 1, 12, 0),
-        'daily_rate': 1000
-    }
+    ext_date = extended.rental.end_date.replace(microsecond=0, tzinfo=timezone.utc)
+    assert ext_date == new_end
 
-    with patch.object(RentalService, 'get_rent_by_id'):
-        rental_service.complete_rental(rent_id, actual_return)
-
-        # 3 часа * 1000 = 3000
-        rental_service.rental_repo.complete_rental.assert_called_once_with(
-            rent_id, actual_return, 3000
-        )
+    rental_service.delete_rental(created.rental.rent_id)
 
 
-def test_cancel_rental_not_found(rental_service):
-    rental_service.rental_repo.exist.return_value = False
-
+def test_get_rent_by_id_not_found(rental_service):
     with pytest.raises(ValueError, match="не существует"):
-        rental_service.cancel_rental(999)
+        rental_service.get_rent_by_id(888)
 

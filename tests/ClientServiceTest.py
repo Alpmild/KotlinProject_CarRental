@@ -1,108 +1,117 @@
-from service import ClientService
-from dto import ClientCreateDTO, ClientResponseDTO, ClientFilterDTO
-from entity import Client
+from service import get_client_service
+from config import SessionLocal
+from dto import ClientCreateDTO, ClientUpdateDTO, ClientFilterDTO
 
 import pytest
-from unittest.mock import MagicMock
-from datetime import datetime
+
+
+@pytest.fixture(scope="function")
+def db_session():
+    return SessionLocal()
 
 
 @pytest.fixture
-def client_service():
-    # Создаем мок сессии, сам репозиторий подменим внутри
-    mock_db = MagicMock()
-    service = ClientService(db_session=mock_db)
-    service.client_repo = MagicMock()
-    return service
+def client_service(db_session):
+    return get_client_service(db_session)
 
 
 def test_create_client_success(client_service):
-    """Тест успешного создания клиента"""
-    client_dto = ClientCreateDTO(
-        name="Иван Иванов",
+    dto = ClientCreateDTO(
+        name="Димон Димонович",
         phone="89991234567",
-        telegram_id="@ivan_tg",
-        license_number="ГИБДД 4123"
+        telegram_id="@test_tg",
+        license_number="ГИБДД 1298"
     )
+    result = client_service.create_client(dto)
 
-    # Настраиваем моки репозитория
-    client_service.client_repo.phone_exists.return_value = False
-    client_service.client_repo.telegram_exists.return_value = False
-
-    # Имитируем возврат из БД (с ID и датой)
-    mock_created_client = Client(
-        client_id=1,
-        name=client_dto.name,
-        phone=client_dto.phone,
-        telegram_id=client_dto.telegram_id,
-        license_number=client_dto.license_number,
-        created_at=datetime.now()  # Важно для валидации в DTO
-    )
-    client_service.client_repo.create.return_value = mock_created_client
-
-    result = client_service.create_client(client_dto)
-
-    assert isinstance(result, ClientResponseDTO)
-    assert result.client_id == 1
+    assert result.client_id is not None
+    assert result.name == "Димон Димонович"
     assert result.phone == "89991234567"
-    client_service.client_repo.create.assert_called_once()
+    client_service.delete_client(result.client_id)
 
 
-def test_create_client_duplicate_phone(client_service):
-    """Тест ошибки при дубликате телефона"""
+def test_create_client_duplicate_phone_raises_error(client_service):
+    dto = ClientCreateDTO(
+        name="Клон",
+        phone="89003123412",  # Номер уже есть в базе
+        telegram_id="@clone1",
+        license_number="ГИБДД 0000"
+    )
 
-    phone = "89003309191"
-    client_dto = ClientCreateDTO(name="Тест", phone=phone, license_number="ГИБДД 9999", telegram_id="@uniqtg")
-    client_service.client_repo.phone_exists.return_value = True
-
-    with pytest.raises(ValueError) as exc:
-        client_service.create_client(client_dto)
-
-    assert f"Номер {phone} уже есть в базе" in str(exc.value)
+    # Повторная попытка с тем же номером
+    with pytest.raises(ValueError, match=f'Номер {dto.phone} уже есть в базе.'):
+        client_service.create_client(dto)
 
 
 def test_get_client_by_id_success(client_service):
-    """Тест получения клиента по ID"""
-    mock_client = Client(
-        client_id=5,
-        name="Петр",
-        phone="555",
-        change_at=datetime.now()
-    )
-    client_service.client_repo.get_by_id.return_value = mock_client
+    dto = ClientCreateDTO(name="Петр", phone="89003309191", telegram_id="@petr", license_number="ГИБДД 7312")
+    created = client_service.create_client(dto)
 
-    result = client_service.get_client_by_id(5)
-
-    assert result.name == "Петр"
-    assert result.client_id == 5
+    found = client_service.get_client_by_id(created.client_id)
+    assert found.name == "Петр"
+    assert found.client_id == created.client_id
+    client_service.delete_client(created.client_id)
 
 
 def test_get_client_by_id_not_found(client_service):
-    """Тест ошибки, если клиент не найден"""
-    client_service.client_repo.get_by_id.return_value = None
-    client_id = 99
+    with pytest.raises(ValueError, match="Клиент с ID 999 не найден"):
+        client_service.get_client_by_id(999)
 
-    with pytest.raises(ValueError) as exc:
-        client_service.get_client_by_id(client_id)
 
-    assert f"Клиент с ID {client_id} не найден" in str(exc.value)
+def test_update_client(client_service):
+    initial = client_service.create_client(
+        ClientCreateDTO(name="Старое Имя", phone="89004401111", telegram_id="@old", license_number="8800")
+    )
+    updated = client_service.update_client(
+        ClientUpdateDTO(
+            client_id=initial.client_id,
+            name="Новое Имя",  # Оставляем тот же или меняем
+            telegram_id="@new_tg",
+        )
+    )
+
+    assert initial.client_id == updated.client_id
+    assert updated.name == "Новое Имя"
+    assert updated.telegram_id == "@new_tg"
+    client_service.delete_client(initial.client_id)
+
+
+def test_delete_client(client_service):
+    # Создаем
+    client = client_service.create_client(
+        ClientCreateDTO(name="Удаляемый", phone="89998887766", telegram_id="@del", license_number="9999")
+    )
+
+    # Удаляем
+    delete_res = client_service.delete_client(client.client_id)
+    assert delete_res is True
+
+    # Проверяем, что больше не находится
+    with pytest.raises(ValueError):
+        client_service.get_client_by_id(client.client_id)
 
 
 def test_get_clients_by_filter(client_service):
-    """Тест фильтрации клиентов"""
-    mock_client = Client(
-        client_id=10,
-        name="Мария",
-        phone="89238713221",
-        telegram_id="@maria_tg",
-        license_number="ГИБДД 1337",
-        created_at=datetime.now()
-    )
-    client_service.client_repo.find_by_filters.return_value = [mock_client]
+    res = [
+        client_service.create_client(
+            ClientCreateDTO(name="Алексей", phone="89998881122", telegram_id="@1", license_number="1111")),
+        client_service.create_client(
+            ClientCreateDTO(name="Александр", phone="89998881123", telegram_id="@2", license_number="2111")),
+        client_service.create_client(
+            ClientCreateDTO(name="Борис", phone="89998881124", telegram_id="@3", license_number="3111"))
+    ]
 
-    filter_dto = ClientFilterDTO(name="ари", phone="7132")
-    result = client_service.get_clients_by_filter(filter_dto)
+    filter_dto = ClientFilterDTO(name="Алекс")
+    results = client_service.get_clients_by_filter(filter_dto)
 
-    assert len(result) == 1
-    assert isinstance(result[0], ClientResponseDTO)
-    assert result[0].name == mock_client.name
+    assert len(results) == 2
+    for r in res:
+        client_service.delete_client(r.client_id)
+
+
+def test_get_by_name(client_service):
+    name = 'Бутусов Денис Николаевич'
+    results = client_service.get_by_name(name)
+    assert len(results) == 1
+    assert results[0].name == name
+

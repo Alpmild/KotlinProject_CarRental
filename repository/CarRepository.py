@@ -62,9 +62,9 @@ class CarRepository:
         if car_filter_dto.status:
             filters.append(Car.status.ilike(car_filter_dto.status))
         if car_filter_dto.min_rate is not None:
-            filters.append(Car.daily_rate >= car_filter_dto.min_rate)
+            filters.append(Car.daily_rate > car_filter_dto.min_rate)
         if car_filter_dto.max_rate is not None:
-            filters.append(Car.daily_rate <= car_filter_dto.max_rate)
+            filters.append(Car.daily_rate < car_filter_dto.max_rate)
 
         if car_filter_dto.model:
             filters.append(
@@ -82,11 +82,11 @@ class CarRepository:
             filters.append(
                 Car.car_specifications.has(CarSpecifications.color.ilike(f'%{car_filter_dto.color}%'))
             )
-        if car_filter_dto.min_power is not None and car_filter_dto.min_power >= 0:
+        if car_filter_dto.min_power is not None:
             filters.append(
                 Car.car_specifications.has(CarSpecifications.power >= car_filter_dto.min_power)
             )
-        if car_filter_dto.max_power is not None and car_filter_dto.max_power > 0:
+        if car_filter_dto.max_power is not None:
             filters.append(
                 Car.car_specifications.has(CarSpecifications.power <= car_filter_dto.max_power)
             )

@@ -51,7 +51,7 @@ class ClientCreateDTO(ValidatedBaseModel):
     name: str = Field(..., min_length=2, max_length=255)
     phone: str = Field(..., pattern=r'^\+?[1-9]\d{1,14}$')
     telegram_id: Optional[str] = Field(None, max_length=30)
-    license_number: str = Field(..., min_length=5, max_length=50)
+    license_number: str = Field(..., min_length=4, max_length=50)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -62,7 +62,7 @@ class ClientUpdateDTO(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=255)
     phone: Optional[str] = Field(None, pattern=r'^\+?[1-9]\d{1,14}$')
     telegram_id: Optional[str] = Field(None, max_length=30)
-    license_number: Optional[str] = Field(None, min_length=5, max_length=50)
+    license_number: Optional[str] = Field(None, min_length=4, max_length=50)
 
     model_config = ConfigDict(from_attributes=True)
 

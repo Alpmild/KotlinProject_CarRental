@@ -3,7 +3,6 @@ from service import CarService
 from dto import (CarCreateDTO, CarWithSpecsUpdateDTO, CarWithSpecsResponseDTO,
                  CarFilterDTO, CarResponseDTO)
 
-
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List
 import logging
@@ -14,6 +13,7 @@ router = APIRouter(
     tags=["Автомобили"],
     dependencies=[Depends(get_current_user)],
 )
+
 
 @router.get("/filter", response_model=List[CarWithSpecsResponseDTO])
 def get_cars_by_filter(
@@ -27,19 +27,22 @@ def get_cars_by_filter(
         raise HTTPException(404, detail=str(e))
     return result
 
+
 @router.get("/available", response_model=List[CarWithSpecsResponseDTO])
 def get_available_cars(service: CarService = Depends(get_car_service)):
     return service.get_available_cars()
 
+
 @router.get("/price-range", response_model=List[CarWithSpecsResponseDTO])
 def get_cars_by_price(
-    min_price: int = Query(..., gt=0),
-    max_price: int = Query(..., gt=0),
-    service: CarService = Depends(get_car_service)
+        min_price: int = Query(..., gt=0),
+        max_price: int = Query(..., gt=0),
+        service: CarService = Depends(get_car_service)
 ):
     if min_price > max_price:
         raise HTTPException(400, "min_price > max_price")
     return service.get_cars_by_price_range(min_price, max_price)
+
 
 @router.get("/{car_id:int}", response_model=CarWithSpecsResponseDTO)
 def get_car_by_id(car_id: int, service: CarService = Depends(get_car_service)):
@@ -48,12 +51,14 @@ def get_car_by_id(car_id: int, service: CarService = Depends(get_car_service)):
     except ValueError as e:
         raise HTTPException(404, detail=str(e))
 
+
 @router.post("/", response_model=CarResponseDTO, status_code=201)
 def create_car(car_dto: CarCreateDTO, service: CarService = Depends(get_car_service)):
     try:
         return service.create_car(car_dto)
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
+
 
 @router.put("/", response_model=CarWithSpecsResponseDTO)
 def update_car(
@@ -65,13 +70,13 @@ def update_car(
     except Exception as e:
         raise HTTPException(400, detail=str(e))
 
+
 @router.delete("/{car_id:int}", status_code=200)
 def delete_car(
-    car_id: int,
-    service: CarService = Depends(get_car_service)
+        car_id: int,
+        service: CarService = Depends(get_car_service)
 ):
     result = service.delete_car(car_id)
     if not result:
         raise HTTPException(404, f"Автомобиль ID={car_id} не найден")
     return result
-

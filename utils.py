@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 import os
 
 
@@ -31,5 +32,4 @@ def verify_password(stored_password_bytes: bytes, provided_password_str: str):
         600000
     )
 
-    import hmac
     return hmac.compare_digest(stored_key, new_key)

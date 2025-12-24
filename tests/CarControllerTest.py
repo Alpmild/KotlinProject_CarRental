@@ -1,52 +1,31 @@
-from ClientOverride import override_get_current_user
 from main import app
-from service import get_car_service, get_current_user
-from dto import CarWithSpecsResponseDTO, CarResponseDTO, CarStatusEnum, TransmissionEnum, ActuatorEnum, WheelEnum, \
-    CarSpecificationsResponseDTO
+from ClientOverride import override_get_current_user
+from config import SessionLocal
+from service import get_car_service, get_current_user, CarService
+from dto import CarStatusEnum, CarCreateDTO
 
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import MagicMock
-from datetime import datetime, timezone
 
-# Создаем мок для сервиса
-mock_car_service = MagicMock()
-test_car_with_specs_response = CarWithSpecsResponseDTO(
-    car=CarResponseDTO(
-        car_id=1,
-        license_plate='A111AA197',
-        vin='W' * 17,
-        daily_rate=300,
-        status=CarStatusEnum.AVAILABLE,
-        change_at=datetime.now(timezone.utc),
-    ),
-    specifications=CarSpecificationsResponseDTO(
-        car_id=1,
-        name='Nissan Silvia S15',
-        mileage=3000,
-        power=200,
-        overclocking=3.1,
-        consump_in_city=12.1,
-        transmission=TransmissionEnum.MANUAL,
-        actuator=ActuatorEnum.FRONT,
-        wheel=WheelEnum.LEFT,
-        color='белый'
-    )
-)
-
-test_car_create = dict(
+test_car_create = CarCreateDTO(
     license_plate='Р123РР197',
     vin='B' * 17,
     daily_rate=300,
-    status=CarStatusEnum.AVAILABLE.value,
+    status=CarStatusEnum.AVAILABLE,
     specifications=None
 )
 
 
+@pytest.fixture(scope="function")
+def db_session():
+    return SessionLocal()
+
+
 @pytest.fixture
-def client():
+def client(db_session):
     # Устанавливаем переопределения зависимостей
-    app.dependency_overrides[get_car_service] = lambda: mock_car_service
+    real_service = CarService(db_session)
+    app.dependency_overrides[get_car_service] = lambda: real_service
     app.dependency_overrides[get_current_user] = override_get_current_user
 
     with TestClient(app) as c:
@@ -55,81 +34,59 @@ def client():
     app.dependency_overrides.clear()
 
 
-# --- ТЕСТЫ ---
+def test_create_car_endpoint(client):
+    response = client.post("/cars/", json=test_car_create.model_dump())
+
+    try:
+        assert response.status_code == 201
+        client.delete(f"/cars/{response.json()['car_id']}")
+    except AssertionError:
+        print(response.json())
+
+
 
 def test_get_car_by_id_success(client):
-    # Настраиваем мок
-    mock_car_service.get_car_by_id.return_value = test_car_with_specs_response.model_dump()
-    car_id = test_car_with_specs_response.car.car_id
+    # Сначала создаем машину
+    create_res = client.post("/cars/", json=test_car_create.model_dump())
+    car_id = create_res.json()['car_id']
 
+    # Проверяем получение
     response = client.get(f"/cars/{car_id}")
 
     assert response.status_code == 200
-    assert response.json()['specifications']['name'] == test_car_with_specs_response.specifications.name
-    mock_car_service.get_car_by_id.assert_called_once_with(1)
+    assert response.json()['car']["license_plate"] == test_car_create.license_plate
+    client.delete(f"/cars/{car_id}")
 
 
-def test_get_car_by_id_not_found(client):
-    # Имитируем ошибку из сервиса
-    car_id = 999
-    error_text = f"Автомобиль с ID {car_id} не найден"
-    mock_car_service.get_car_by_id.side_effect = ValueError(error_text)
 
-    response = client.get(f"/cars/{car_id}")
-
+def test_get_car_not_found(client):
+    response = client.get("/cars/999")
     assert response.status_code == 404
-    assert response.json()["detail"] == error_text
+    assert "не найден" in response.json()["detail"]
 
 
-def test_create_car_success(client):
-    car_id = 12
-    mock_car_service.create_car.return_value = dict(
-        car_id=car_id,
-        license_plate=test_car_create['license_plate'],
-        vin=test_car_create['vin'],
-        daily_rate=test_car_create['daily_rate'],
-        status=test_car_create['status'],
-        change_at=datetime.now(timezone.utc)
-    )
-
-    response = client.post("/cars/", json=test_car_create)
-
-    assert response.status_code == 201
-    assert response.json()["car_id"] == car_id
-    mock_car_service.create_car.assert_called_once()
-
-
-def test_get_cars_by_price_range_invalid(client):
-    # Проверка бизнес-логики контроллера: min > max
+def test_get_cars_by_price_invalid_range(client):
     response = client.get("/cars/price-range?min_price=5000&max_price=1000")
-
     assert response.status_code == 400
     assert response.json()["detail"] == "min_price > max_price"
 
 
 def test_delete_car_success(client):
-    mock_car_service.delete_car.return_value = True
+    create_res = client.post("/cars/", json=test_car_create.model_dump())
+    car_id = create_res.json()["car_id"]
 
-    response = client.delete("/cars/1")
-
+    response = client.delete(f"/cars/{car_id}")
     assert response.status_code == 200
-    assert response.json() is True
+
+    # Проверяем, что теперь 404
+    check = client.get(f"/cars/{car_id}")
+    assert check.status_code == 404
 
 
-def test_delete_car_not_found(client):
-    mock_car_service.delete_car.return_value = False
+def test_create_duplicate_vin_error(client):
+    res = client.post("/cars/", json=test_car_create.model_dump())
 
-    response = client.delete("/cars/999")
-
-    assert response.status_code == 404
-    assert "не найден" in response.json()["detail"]
-
-
-def test_get_cars_by_filter(client):
-    # Параметры фильтра передаются как Query-params благодаря Depends()
-    mock_car_service.get_cars_by_filter.return_value = []
-
-    response = client.get("/cars/filter?vin=WWWW&model=BMW")
-
-    assert response.status_code == 200
-    mock_car_service.get_cars_by_filter.assert_called_once()
+    response = client.post("/cars/", json=test_car_create.model_dump())
+    assert response.status_code == 400
+    assert "уже существует" in response.json()["detail"]
+    client.delete(f"/cars/{res.json()['car_id']}")

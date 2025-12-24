@@ -1,7 +1,5 @@
 from sqlalchemy.orm import Session
-from typing import Optional, List, Dict, Any
-from sqlalchemy import and_, or_, func
-import decimal
+from typing import Optional
 from entity import CarSpecifications  # Предполагается, что класс в models.py
 from dto import CarSpecificationsUpdateDTO
 

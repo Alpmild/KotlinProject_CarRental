@@ -84,7 +84,7 @@ class CarResponseDTO(BaseModel):
 class CarWithSpecsResponseDTO(BaseModel):
     """DTO с автомобилем и его характеристиками"""
     car: CarResponseDTO
-    specifications: CarSpecificationsResponseDTO
+    specifications: Optional[CarSpecificationsResponseDTO]
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -108,7 +108,7 @@ class CarFilterDTO(BaseModel):
     transmission: Optional[str] = None
     actuator: Optional[str] = None
     color: Optional[str] = None
-    min_power: int = 0
-    max_power: int = 99999
+    min_power: int = None
+    max_power: int = None
 
     model_config = ConfigDict(from_attributes=True)

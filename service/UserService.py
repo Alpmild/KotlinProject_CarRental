@@ -12,7 +12,7 @@ class UserService:
         self.db_session = db_session
         self.user_repo = UserRepository(db_session)
 
-    def create_user(self, user_dto: UserCreateDTO) -> Dict:
+    def create_user(self, user_dto: UserCreateDTO) -> UserResponseDTO:
         email = str(user_dto.email)
         if self.user_repo.email_exists(email):
             raise ValueError(f"Email {email} уже используется")
@@ -25,7 +25,7 @@ class UserService:
         )
 
         created_user = self.user_repo.create(user_entity)
-        return UserResponseDTO.model_validate(created_user).model_dump()
+        return UserResponseDTO.model_validate(created_user)
 
     def update_user(self, user_info_dto: UserUpdateDTO) -> UserResponseDTO:
         client_response_dto = UserResponseDTO.model_validate(self.user_repo.update(user_info_dto))

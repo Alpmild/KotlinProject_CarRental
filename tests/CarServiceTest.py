@@ -1,128 +1,132 @@
-from service import CarService
-from dto import CarCreateDTO, CarResponseDTO, CarFilterDTO
-from entity import Car, CarSpecifications
+from service import get_car_service
+from dto import (CarCreateDTO, CarSpecificationsCreateDTO, CarFilterDTO,
+                 CarWithSpecsUpdateDTO, TransmissionEnum, ActuatorEnum,
+                 WheelEnum, CarStatusEnum, CarUpdateDTO)
+from config import SessionLocal
 
 import pytest
-from unittest.mock import MagicMock
-from datetime import datetime
+
+
+@pytest.fixture(scope="function")
+def db_session():
+    return SessionLocal()
+
 
 @pytest.fixture
-def mock_db():
-    return MagicMock()
-
-
-@pytest.fixture
-def car_service(mock_db):
-    # При создании сервиса подменяем репозитории внутри через моки
-    service = CarService(db_session=mock_db)
-    service.car_repo = MagicMock()
-    service.specs_repo = MagicMock()
-    return service
+def car_service(db_session):
+    return get_car_service(db_session)
 
 
 def test_create_car_success(car_service):
-    """Проверка успешного создания автомобиля"""
-    # Данные для теста
-    car_dto = CarCreateDTO(
-        license_plate="А111АА123",
-        vin="B" * 17,
-        daily_rate=5000,
-        status="AVAILABLE",
-        specifications=None
-    )
-
-    mock_car_entity = Car(
+    # Подготовка данных
+    specs_dto = CarSpecificationsCreateDTO(
         car_id=1,
-        license_plate=car_dto.license_plate,
-        vin=car_dto.vin,
-        daily_rate=car_dto.daily_rate,
-        status=car_dto.status,
-        change_at=datetime.now()
-    )
-
-    car_service.car_repo.vin_exists.return_value = False
-    car_service.car_repo.license_plate_exists.return_value = False
-
-    car_service.car_repo.create.return_value = mock_car_entity
-
-    result = car_service.create_car(car_dto)
-
-    assert result.car_id == 1
-    assert result.change_at is not None
-
-
-def test_create_car_duplicate_vin(car_service):
-    """Проверка ошибки при дублировании VIN"""
-    vin = "WWWWWW1111111111W"
-    car_dto = CarCreateDTO(
-        license_plate="А413ВА12",
-        vin=vin,
-        daily_rate=5000,
-        status="AVAILABLE"
-    )
-
-    # Имитируем, что VIN уже есть в базе
-    car_service.car_repo.vin_exists.return_value = True
-
-    # Проверяем, что вызывается ValueError
-    with pytest.raises(ValueError) as excinfo:
-        car_service.create_car(car_dto)
-
-    assert f"VIN {vin} уже существует" in str(excinfo.value)
-    # Убеждаемся, что метод create даже не вызывался
-    car_service.car_repo.create.assert_not_called()
-
-
-def test_get_car_by_id_not_found(car_service):
-    """Проверка ошибки, если машина не найдена"""
-    car_id = 999
-    car_service.car_repo.get_by_id.return_value = None
-
-    with pytest.raises(ValueError) as excinfo:
-        car_service.get_car_by_id(car_id)
-
-    assert f"Автомобиль с ID {car_id} не найден" in str(excinfo.value)
-
-
-def test_get_cars_by_filter(car_service):
-    """Проверка фильтрации машин"""
-
-    # 1. Создаем реальный объект характеристик
-    # Заполняем ВСЕ поля, которые Pydantic ожидает в CarSpecificationsResponseDTO
-    mock_specs = CarSpecifications(
-        car_id=101,
         name="Tesla Model 3",
         mileage=100,
         power=450,
         overclocking=3.3,
-        consump_in_city=0.0,
-        transmission="AUTOMATIC",  # Передаем строку или .value от Enum
-        actuator="AWD",
-        wheel="LEFT",
-        color="Black"
+        consump_in_city=20,
+        transmission=TransmissionEnum.AUTOMATIC,
+        actuator=ActuatorEnum.ALL,
+        wheel=WheelEnum.LEFT,
+        color="White"
+    )
+    car_dto = CarCreateDTO(
+        license_plate="А523АА21",
+        vin="1234567890ABCDEFG",
+        daily_rate=5000,
+        status=CarStatusEnum.AVAILABLE,
+        specifications=specs_dto
     )
 
-    # 2. Создаем реальный объект машины
-    mock_car = Car(
-        car_id=101,
-        license_plate="Р213ОА197",
-        vin="TESTVIN1234567890",
-        daily_rate=3000.0,
-        status="AVAILABLE",
-        change_at=datetime.now(),
-        car_specifications=mock_specs  # Привязываем характеристики
+    # Действие
+    result = car_service.create_car(car_dto)
+
+    # Проверки
+    assert result.license_plate == "А523АА21"
+    assert result.vin == "1234567890ABCDEFG"
+
+    # Проверка в базе через сервис
+    db_car = car_service.get_car_by_id(result.car_id)
+    assert db_car.car.vin == "1234567890ABCDEFG"
+    assert db_car.specifications.name == "Tesla Model 3"
+
+
+def test_create_car_duplicate_vin_raises_error(car_service):
+    car_dto = CarCreateDTO(
+        license_plate="А111АА77",
+        vin="WWWWWWWWWWWWWWWWW",  # Данный vin уже есть в базе
+        daily_rate=1000,
+        status=CarStatusEnum.AVAILABLE,
+        specifications=None
     )
 
-    # 3. Настраиваем мок репозитория
-    car_service.car_repo.find_by_filters.return_value = [mock_car]
+    with pytest.raises(ValueError, match=f"VIN {car_dto.vin} уже существует"):
+        car_service.create_car(car_dto)
 
-    filter_dto = CarFilterDTO(status="AVAILABLE")
 
-    # 4. Вызов метода
-    result = car_service.get_cars_by_filter(filter_dto)
+def test_get_car_by_id_not_found(car_service):
+    car_id = 9999
+    with pytest.raises(ValueError, match=f"Автомобиль с ID {car_id} не найден"):
+        car_service.get_car_by_id(car_id)
 
-    # 5. Проверки
-    assert len(result) == 1
-    # Если метод возвращает список DTO
-    assert result[0]['car']['license_plate'] == "Р213ОА197"
-    assert result[0]['specifications']['name'] == "Tesla Model 3"
+
+def test_delete_car(car_service):
+    # Сначала создаем
+    car_dto = CarCreateDTO(
+        license_plate="О000ОО197",
+        vin="XEATC02DFWGBK4LTX",
+        daily_rate=2000,
+        status=CarStatusEnum.AVAILABLE,
+        specifications=None
+    )
+    created = car_service.create_car(car_dto)
+
+    delete_result = car_service.delete_car(created.car_id)
+    assert delete_result is True
+
+    with pytest.raises(ValueError):
+        car_service.get_car_by_id(created.car_id)
+
+
+def test_get_cars_by_filter(car_service):
+    # Создаем машину с ценой 3000
+    car1_id = car_service.create_car(CarCreateDTO(
+        license_plate="С333СС77", vin="V" * 17, daily_rate=3000,
+        status=CarStatusEnum.AVAILABLE, specifications=None
+    )).car_id
+    # Создаем машину с ценой 7000
+    car2_id = car_service.create_car(CarCreateDTO(
+        license_plate="О444ОО77", vin="A" * 17, daily_rate=7000,
+        status=CarStatusEnum.AVAILABLE, specifications=None
+    )).car_id
+
+    results = car_service.get_cars_by_filter(CarFilterDTO(
+        min_rate=2999, max_rate=3001
+    ))
+
+    assert len(results) == 1
+    assert results[0]['car']['daily_rate'] == 3000
+
+    car_service.delete_car(car1_id)
+    car_service.delete_car(car2_id)
+
+
+def test_update_car(car_service):
+    car_dto = car_service.create_car(CarCreateDTO(
+        license_plate="Е555ЕЕ77",
+        vin="P" * 17,
+        daily_rate=1000,
+        status=CarStatusEnum.AVAILABLE,
+        specifications=None
+    ))
+    assert car_dto.license_plate == "Е555ЕЕ77"
+
+    update_dto = car_service.update_car(CarWithSpecsUpdateDTO(
+        car=CarUpdateDTO(
+            car_id=car_dto.car_id,
+            license_plate="А555АА77"
+        )
+    ))
+    assert update_dto.car.car_id == car_dto.car_id and update_dto.car.license_plate == "А555АА77"
+    car_service.delete_car(car_dto.car_id)

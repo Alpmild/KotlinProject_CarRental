@@ -9,7 +9,8 @@ from typing import Dict, List
 
 
 class CarService:
-    def __init__(self, db_session: Session):
+    def __init__(self, db_session: Session
+                 ):
         self.db_session = db_session
         self.car_repo = CarRepository(db_session)
         self.specs_repo = CarSpecificationsRepository(db_session)
@@ -59,9 +60,12 @@ class CarService:
         car = CarResponseDTO.model_validate(
             self.car_repo.update(car_info_dto.car)
         )
-        specifications = CarSpecificationsResponseDTO.model_validate(
-            self.specs_repo.update(car_info_dto.specifications)
-        )
+        if car_info_dto.specifications:
+            specifications = CarSpecificationsResponseDTO.model_validate(
+                self.specs_repo.update(car_info_dto.specifications)
+            )
+        else:
+            specifications = None
         car_response_dto = CarWithSpecsResponseDTO(car=car, specifications=specifications)
         return car_response_dto
 
@@ -78,7 +82,10 @@ class CarService:
 
         for entity in cars_entity_list:
             car_dto = CarResponseDTO.model_validate(entity)
-            spec_dto = CarSpecificationsResponseDTO.model_validate(entity.car_specifications)
+            if entity.car_specifications is not None:
+                spec_dto = CarSpecificationsResponseDTO.model_validate(entity.car_specifications)
+            else:
+                spec_dto = None
 
             combined_dto = CarWithSpecsResponseDTO(car=car_dto, specifications=spec_dto).model_dump()
             cars_with_specs.append(combined_dto)

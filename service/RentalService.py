@@ -69,7 +69,9 @@ class RentalService:
         if rental is None:
             raise ValueError(f'{rent_id=} не существует')
 
-        if rental.end_date > new_end_date:
+        end_date = rental.end_date.replace(tzinfo=timezone.utc)
+
+        if end_date > new_end_date:
             return self.get_rent_by_id(rent_id)
         return self.update_rental(
             RentalUpdateDTO(rent_id=rent_id, end_date=new_end_date)
