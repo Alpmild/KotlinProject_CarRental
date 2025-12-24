@@ -42,6 +42,8 @@ class RentalService:
                 f'Автомобиль {car_id} не доступен в данный промежуток времени:'
                 f' {(rental_dto.start_date, rental_dto.end_date)=}'
             )
+
+        rental_dto.start_date = rental_dto.start_date.replace(tzinfo=timezone.utc)
         if rental_dto.start_date > datetime.now(timezone.utc):
             status = RentalStatusEnum.AWAITING
         else:
@@ -70,6 +72,7 @@ class RentalService:
             raise ValueError(f'{rent_id=} не существует')
 
         end_date = rental.end_date.replace(tzinfo=timezone.utc)
+        new_end_date = new_end_date.replace(tzinfo=timezone.utc)
 
         if end_date > new_end_date:
             return self.get_rent_by_id(rent_id)

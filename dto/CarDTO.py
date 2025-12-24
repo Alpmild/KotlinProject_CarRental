@@ -108,7 +108,7 @@ class CarFilterDTO(BaseModel):
     transmission: Optional[str] = None
     actuator: Optional[str] = None
     color: Optional[str] = None
-    min_power: int = None
-    max_power: int = None
+    min_power: Optional[int] = None
+    max_power: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)

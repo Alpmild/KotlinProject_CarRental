@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e646b94-32f2-4ce6-abc2-9cfa76ac1f67" name="Changes" comment="Дописанная API">
-      <change afterPath="$PROJECT_DIR$/config/data.py" afterDir="false" />
+    <list default="true" id="8e646b94-32f2-4ce6-abc2-9cfa76ac1f67" name="Changes" comment="Небольшие изменения">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/connection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/Dependencies.py" beforeDir="false" afterPath="$PROJECT_DIR$/service/Dependencies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dto/CarDTO.py" beforeDir="false" afterPath="$PROJECT_DIR$/dto/CarDTO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dto/RentalDTO.py" beforeDir="false" afterPath="$PROJECT_DIR$/dto/RentalDTO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/RentalService.py" beforeDir="false" afterPath="$PROJECT_DIR$/service/RentalService.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -302,7 +302,15 @@
       <option name="project" value="LOCAL" />
       <updated>1766581482712</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Небольшие изменения">
+      <option name="closed" value="true" />
+      <created>1766585960386</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1766585960386</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -318,7 +326,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Дописанная API" />
-    <option name="LAST_COMMIT_MESSAGE" value="Дописанная API" />
+    <MESSAGE value="Небольшие изменения" />
+    <option name="LAST_COMMIT_MESSAGE" value="Небольшие изменения" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -29,6 +29,7 @@ class RentalCreateDTO(BaseModel):
     @field_validator('end_date')
     @classmethod
     def validate_end_date(cls, v):
+        v = v.replace(tzinfo=timezone.utc)
         if v <= datetime.now(timezone.utc):
             raise ValueError('Дата возврата должна быть в будущем')
         return v

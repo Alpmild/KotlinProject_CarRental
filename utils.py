@@ -6,14 +6,12 @@ import os
 def hash_password(password: str):
     # Генерируем случайную соль (16 байт)
     salt = os.urandom(16)
-    # Хешируем пароль
     key = hashlib.pbkdf2_hmac(
         'sha256',
         password.encode('utf-8'),
         salt,
-        600000  # Количество итераций (стандарт 2025 года)
+        600000
     )
-    # Возвращаем соль + хеш (вместе), чтобы потом достать соль обратно
     return salt + key
 
 
@@ -21,7 +19,7 @@ def verify_password(stored_password_bytes: bytes, provided_password_str: str):
     # 1. Извлекаем соль (первые 16 байт)
     salt = stored_password_bytes[:16]
 
-    # 2. Извлекаем сам хеш (все, что после 16-го байта)
+    # 2. Извлекаем сам хеш
     stored_key = stored_password_bytes[16:]
 
     # 3. Хешируем введенный пароль с ТЕМ ЖЕ алгоритмом, солью и итерациями
